@@ -1244,11 +1244,14 @@ function setupChannel (collected, message, author) {
 									});
 								} else {
 									message.channel.send("That's not a valid role!");
+									db.close();
 								}
 							})
 							.catch(c => { 
-								if(c.size < 1)
+								if(c.size < 1) {
 									message.channel.send ("Setup cancelled, you took longer than 1 minute!");
+									db.close();
+								}
 							});
 					});
 				});
