@@ -127,7 +127,6 @@ client.on("guildMemberAdd", guild => {
 				guild.guild.channels.get(result[0].welcomeChannel).send(`Welcome to __**${guild.guild.name}**__, <@${guild.user.id}>!`);
 				let r = guild.guild.roles.find("name",result[0].welcomeRole);
 				guild.addRole(r)
-					.then(console.log)
 					.catch(console.error);
 				db.close();
 			}else {
@@ -189,6 +188,7 @@ client.on("message", async message => {
 					if(result[0] != null){
 						prefix = result[0].prefix;
 						checkCommand(message,prefix);
+						db.close();
 					} else {
 						var serv = defaultServer;
 						serv.serverID = message.guild.id;
@@ -222,7 +222,10 @@ client.on("message", async message => {
 					upd.xp = result.xp + Math.floor(Math.random()*5)+1;
 					dbo.collection("users").update(query, upd, function (err, res){
 						if(err) throw err;
+						db.close();
 					});
+				} else {
+					db.close();
 				}
 			});
 		});
@@ -243,6 +246,8 @@ client.on("message", async message => {
 						if(err) throw err;
 						db.close();
 					});
+				} else {
+					db.close();
 				}
 			} else {
 				var user = defaultUser;
@@ -252,6 +257,8 @@ client.on("message", async message => {
 						if(err) throw err;
 						db.close();
 					});
+				} else {
+					db.close();
 				}
 			}
 		});
@@ -333,6 +340,7 @@ async function checkCommand (message, prefix) {
 						ch.daily = d.getDate()+d.getMonth();
 						dbo.collection("users").update(query, ch, function (err, res) {
 							if(err) throw err;
+							db.close();
 						});
 					} else {
 						message.reply("you've already gotten your daily!");
@@ -889,12 +897,16 @@ V`).then(() => {
 			var cha = result;
 			if(cha != null){
 				makeProfile(message,cha.money,cha.xp,cha.level,tags);
+				db.close();
 			} else {
 				if(args[0] != null){
+					db.close();
 					message.reply("this user isn't registered yet, have them try some other commands first!");
-				} else message.reply("you haven't been registered yet! Try some other commands first!");
+				} else {
+					message.reply("you haven't been registered yet! Try some other commands first!");
+					db.close();
+				}
 			}
-			db.close();
 		});
 	  });
   }
@@ -1228,6 +1240,7 @@ function setupChannel (collected, message, author) {
 										if(err) throw err;
 										message.channel.send(`Guild default role set to ${role}`);
 										message.channel.send("Setup complete! (For now)");
+										db.close();
 									});
 								} else {
 									message.channel.send("That's not a valid role!");
