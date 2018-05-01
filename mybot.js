@@ -4,7 +4,7 @@ const Attachment = require("discord.js").Attachment;
 var Jimp = require("jimp");
 var ms = require("ms");
 var mongo = require("mongodb").MongoClient;
-var welcomerole = false;
+//var welcomerole = false;
 
 //MongoDB URL
 var UserURL = process.env.USER;
@@ -25,7 +25,7 @@ var helpMenu = {
       description: "EverythingBot, does literally everything (Still in production, currently doesn't do much). Here's the list of commands",
       fields: [{
           name: ":straight_ruler:  Admin/Mod",
-          value: "clear, kick, ban, unban, mute, unmute, setprefix"
+          value: "clear, kick, ban, unban, mute, unmute, setprefix, setup"
         },
 		{
           name: ":camera:  Image commands",
@@ -56,7 +56,9 @@ var helpMenu = {
 
 var defaultServer = {
 	"serverID":null,
-	"prefix":'e!'
+	"prefix":'e!',
+	"welcomeRole":null,
+	"welcomeChannel":null
 }
 
 var defaultUser = {
@@ -96,7 +98,7 @@ client.on("guildCreate", guild => {
   guild.channels.forEach((channel) => {
 	if(channel.type == "text" && defaultChannel == "") {
 		if(channel.permissionsFor(guild.me).has("SEND_MESSAGES")) {
-		defaultChannel = channel;
+			defaultChannel = channel;
 		}
 	}
   });
@@ -114,7 +116,26 @@ client.on("guildCreate", guild => {
   client.user.setActivity(`on ${client.guilds.size} servers | e!help`);
 });
 
-client.on("guildmemberadd", guild => {
+client.on("guildMemberAdd", guild => {
+	mongo.connect(ServerURL, function(err, db) {
+		if(err) throw err;
+		var dbo = db.db("servers");
+		var query = { "serverID": guild.guild.id };
+		dbo.collection("servers").find(query).toArray(function(err, result) {
+			if(err) throw err;
+			if(result[0].welcomeChannel!==null){
+				guild.guild.channels.get(result[0].welcomeChannel).send(`Welcome to __**${guild.guild.name}**__, <@${guild.user.id}>!`);
+				let r = guild.guild.roles.find("name",result[0].welcomeRole);
+				guild.addRole(r)
+					.then(console.log)
+					.catch(console.error);
+				db.close();
+			}else {
+				db.close();
+			}
+		});
+	});
+	/*
   if (welcomerole == false) {
 
   }
@@ -123,6 +144,20 @@ client.on("guildmemberadd", guild => {
       .then(console.log)
       .catch(console.error);
   }
+  */
+});
+
+client.on("guildMemberRemove", guild => {
+	mongo.connect(ServerURL, function(err, db) {
+		if(err) throw err;
+		var dbo = db.db("servers");
+		var query = { "serverID": guild.guild.id };
+		dbo.collection("servers").find(query).toArray(function(err, result) {
+			if(err) throw err;
+			guild.guild.channels.get(result[0].welcomeChannel).send(`${guild.user.tag} has just left. See you later!`);
+			db.close();
+		});
+	});
 });
 
 client.on("guildDelete", guild => {
@@ -143,30 +178,32 @@ client.on("guildDelete", guild => {
   client.user.setActivity(`on ${client.guilds.size} servers | e!help`);
 });
 
-client.on("message", async message => {
-	mongo.connect(ServerURL, function(err, db) {
-		var dbo = db.db("servers");
-		var query = { "serverID": message.guild.id };
-		if(message.guild !== null) {
-			dbo.collection("servers").find(query).toArray (function (err, result) {
-				if(err) throw err;
-				if(result[0] != null){
-					prefix = result[0].prefix;
-					checkCommand(message,prefix);
-				} else {
-					var serv = defaultServer;
-					serv.serverID = message.guild.id;
-					dbo.collection("servers").insert(serv, function(err, obj) {
-						if(err) throw err;
-						db.close();
-					});
-				}
-			});
+client.on("message", async message => {	
+	if(message.guild !== null) {
+		mongo.connect(ServerURL, function(err, db) {
+			var dbo = db.db("servers");
+			var query = { "serverID": message.guild.id };
+			if(message.guild !== null) {
+				dbo.collection("servers").find(query).toArray (function (err, result) {
+					if(err) throw err;
+					if(result[0] != null){
+						prefix = result[0].prefix;
+						checkCommand(message,prefix);
+					} else {
+						var serv = defaultServer;
+						serv.serverID = message.guild.id;
+						dbo.collection("servers").insert(serv, function(err, obj) {
+							if(err) throw err;
+							db.close();
+						});
+					}
+				});
+			}
+		});
+		
+		if(message.mentions.members.first()){
+			if(message.mentions.members.first().user.id===client.user.id) mentionCommand (message, message.mentions.members.first());
 		}
-	});
-	
-	if(message.mentions.members.first()){
-		if(message.mentions.members.first().user.id===client.user.id) mentionCommand (message, message.mentions.members.first());
 	}
 });
 
@@ -239,6 +276,14 @@ async function checkCommand (message, prefix) {
 	const args = message.content.slice(prefix.length).trim().split(/ +/g);
 	const command = args.shift().toLowerCase();
 	var col = null;
+	
+	if(command === "setup") {
+		if(message.member.hasPermission("ADMINISTRATOR")){
+			setup (message, message.author.tag);
+		} else {
+			message.reply("you're not allowed to use this command!"); 
+		}
+	}
 	
 	if(command === "leaderboard" || command === "l"){
 		if(args[0] === "money"||args[0] === "m") {
@@ -1135,6 +1180,73 @@ function rotateFunction (message, degrees, im) {
 	}
 
 }
+
+function setup (message, author) {
+	message.reply("please reply with your welcome channel").then(message => {
+		const filter = m => m.author.tag.includes (author);
+		message.channel.awaitMessages(filter, { max: 1, time: 60000, errors : ['time']})
+			.then(collected => {
+				setupChannel(collected,message, author);
+			})
+			.catch(collected => { 
+				if(collected.size < 1)
+					message.channel.send ("Setup cancelled, you took longer than 1 minute!");
+			}
+			);
+	});
+}
+
+function setupChannel (collected, message, author) {
+	var query = { "content": -1 };
+	var c = collected.first().content.toString().replace(/[<#>]/g, '');
+	var x = collected.first().content;
+	if(client.channels.get(c)) {
+		mongo.connect(ServerURL, function(err, db) {
+			var dbo = db.db("servers");
+			var query = { "serverID": message.guild.id };
+			dbo.collection("servers").findOne(query, function(err, result ) {
+				if(err) throw err;
+				var r = result;
+				var t = defaultServer;
+				t.serverID = result.serverID;
+				t.prefix = result.prefix;
+				t.welcomeChannel = c;
+				dbo.collection("servers").update(query, t, function (err, res) {
+					if(err) throw err;
+					message.channel.send("Now send name of the role you want people to get when they join").then(message=> {
+						const filter2 = m => m.author.tag.includes (author);
+						message.channel.awaitMessages(filter2, { max: 1, time: 60000, errors : ['time']})
+							.then(c => {
+								//console.log(c.first().content);
+								var role = c.first().content.toString();
+								//console.log(message.channel.guild.roles.exists("name", role));
+								if(message.channel.guild.roles.exists("name", role)) {
+									r.welcomeRole = role;
+									var dbo = db.db("servers");
+									var query = { "serverID": message.guild.id };
+									dbo.collection("servers").update(query, r,function(err, result ) {
+										if(err) throw err;
+										message.channel.send(`Guild default role set to ${role}`);
+										message.channel.send("Setup complete! (For now)");
+									});
+								} else {
+									message.channel.send("That's not a valid role!");
+								}
+							})
+							.catch(c => { 
+								if(c.size < 1)
+									message.channel.send ("Setup cancelled, you took longer than 1 minute!");
+							});
+					});
+				});
+			});
+		});
+		message.channel.send(`Guild welcome channel updated to ${x}`);
+	} else {
+		message.channel.send("That's not a channel!");
+	}
+}
+
 
 client.login(process.env.BOT_TOKEN);
 
