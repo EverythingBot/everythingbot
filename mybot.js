@@ -102,7 +102,7 @@ client.on("guildCreate", guild => {
 		}
 	}
   });
-  defaultChannel.send("Thanks for inviting me to the server! I'm **EverythingBot**. If you need any help, type `e!help`. \r\nIf you have any questions, contact the dev `Yer Good Ol' Loli Grandpappy#8486`");
+  defaultChannel.send("Thanks for inviting me to the server! I'm **EverythingBot**. If you need any help, type `e!help`. \r\nIf you have any questions, join the support server https://discord.gg/yuSHrjr");
   mongo.connect(ServerURL, function(err, db) {
 	  var dbo = db.db("servers");
 	  var serv = defaultServer;
@@ -1249,7 +1249,7 @@ function setupChannel (collected, message, author) {
 				r.welcomeChannel = c;
 				dbo.collection("servers").update(query, r, function (err, res) {
 					if(err) throw err;
-					message.channel.send("Now send name of the role you want people to get when they join").then(message=> {
+					message.channel.send("Now send the name of the role you want people to get when they join").then(message=> {
 						const filter2 = m => m.author.tag.includes (author);
 						message.channel.awaitMessages(filter2, { max: 1, time: 60000, errors : ['time']})
 							.then(c => {
