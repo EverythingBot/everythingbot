@@ -272,6 +272,7 @@ async function checkCommand (message, prefix) {
 	}
 	
 	if(command === "disable" || command === "d") {
+		if(message.member.hasPermission("ADMINISTRATOR")){
 		if(args[0] === "role" || args[0] === "r") {
 			mongo.connect(ServerURL, function(err, db) {
 				if(err) throw err;
@@ -314,6 +315,9 @@ async function checkCommand (message, prefix) {
 			});
 		} else {
 			message.reply("Available options to disable are `welcome` and `role`");
+		}
+		} else {
+			message.reply("you're not allowed to use this command!"); 
 		}
 	}
 	
