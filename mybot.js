@@ -37,7 +37,7 @@ var helpMenu = {
         },
 		{
           name: ":briefcase: User commands",
-          value: "bal, daily, leaderboard"
+          value: "bal, daily, leaderboard/l"
         },
         {
           name: ":regional_indicator_t: :regional_indicator_e: :regional_indicator_x: :regional_indicator_t:  commands",
@@ -45,7 +45,7 @@ var helpMenu = {
         },
 		{
           name: ":thinking: Etc commands",
-          value: "credits"
+          value: "credits, membercount/mc"
         }
       ],
       footer: {
@@ -455,6 +455,23 @@ async function checkCommand (message, prefix) {
 		}
 	}
 	
+	if(command === "membercount" || command === "mc"){
+		message.channel.send({
+			"embed": {
+				"color": 65299,
+				"fields": [
+				{
+					"name":"Total members",
+					"value":`${message.guild.memberCount}`,
+					"inline":true
+				}
+				]
+			}
+		});
+	}
+	
+	//This isn't even used anymore, but I'll keep it since it's not public
+	/*
 	if (command === "welcomerole") {
     const sayMessage = args.join(" ");
     console.log(sayMessage);
@@ -468,6 +485,7 @@ async function checkCommand (message, prefix) {
       welcomerole = false;
     }
   }
+  */
 
 	if(command === "ping") {
     const m = await message.channel.send("Ping?");
