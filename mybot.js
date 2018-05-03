@@ -41,7 +41,7 @@ var helpMenu = {
         },
         {
           name: ":regional_indicator_t: :regional_indicator_e: :regional_indicator_x: :regional_indicator_t:  commands",
-          value: "ping, say, bigtext, mention, announce, invite, server"
+          value: "ping, bigtext, mention, announce, invite, server"
         },
 		{
           name: ":thinking: Etc commands",
@@ -68,12 +68,6 @@ var defaultUser = {
 	"level":1,
 	"daily":null
 }
-
-mongo.connect(UserURL, function(err, db) {
-	if(err) throw err;
-	console.log("Connected to mLab!");
-	var dbo = db.db("users");
-});
 
 function isAdmin(member) {
     return member.hasPermission("ADMINISTRATOR");
@@ -505,7 +499,7 @@ async function checkCommand (message, prefix) {
 	}});
    // m.edit(`Pong! Ping is ${m.createdTimestamp - message.createdTimestamp}ms. API ping is ${Math.round(client.ping)}ms`);
   }
-
+/*
 	if(command === "say") {
     const sayMessage = args.join(" ");
 	if(sayMessage.includes('@everyone')||sayMessage.includes('@here')){
@@ -523,6 +517,7 @@ async function checkCommand (message, prefix) {
     message.delete().catch(O_o=>{});
     message.channel.send(sayMessage);
   }
+  */
   
 	if (command === "clear") {
         const number = args.join(" ");
