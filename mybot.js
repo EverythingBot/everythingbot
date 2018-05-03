@@ -229,7 +229,7 @@ client.on("message", async message => {
 					dbo.collection("users").findOne(query, function (err, result) {
 						if(err) throw err;
 						if(result == null){
-							dbo.collection("users").insert(user, function(err, obj){
+							dbo.collection("users").insertOne(user, function(err, obj){
 								if(err) throw err;
 								db.close();
 							});
