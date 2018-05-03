@@ -217,24 +217,24 @@ client.on("message", async message => {
 					upd.level += 1;
 					dbo.collection("users").update(query, upd, function (err, res){
 						if(err) throw err;
-						db.close();
 					});
-				} else {
-					db.close();
 				}
 			} else {
 				var user = defaultUser;
 				user.name = message.author.tag;
 				if(message.author.bot===false){
-					dbo.collection("users").insert(user, function(err, obj){
+					dbo.collection("users").findOne(query, function (err, result) {
 						if(err) throw err;
-						db.close();
+						if(result == null){
+							dbo.collection("users").insert(user, function(err, obj){
+								if(err) throw err;
+							});
+						}
 					});
-				} else {
-					db.close();
 				}
 			}
 		});
+		db.close();
 	});
 });
 
