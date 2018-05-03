@@ -1183,7 +1183,7 @@ function flipFunction (message, im) {
 function blurFunction (message, amount, im) {
 	message.channel.startTyping(1);
 	var a = Math.abs(parseInt (amount));
-	if(isNan(a)==false){
+	if(isNaN(a)==false){
 		Jimp.read(im, function (err, image) {
 			message.channel.startTyping(1);
 			if(err) {
