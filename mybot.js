@@ -217,7 +217,10 @@ client.on("message", async message => {
 					upd.level += 1;
 					dbo.collection("users").update(query, upd, function (err, res){
 						if(err) throw err;
+						db.close();
 					});
+				} else {
+					db.close();
 				}
 			} else {
 				var user = defaultUser;
@@ -228,13 +231,18 @@ client.on("message", async message => {
 						if(result == null){
 							dbo.collection("users").insert(user, function(err, obj){
 								if(err) throw err;
+								db.close();
 							});
+						} else {
+							db.close();
 						}
 					});
+				} else {
+					db.close();
 				}
 			}
 		});
-		db.close();
+		
 	});
 });
 
