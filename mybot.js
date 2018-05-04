@@ -209,7 +209,7 @@ client.on("message", async message => {
 		var query = { "name": message.author.tag };
 		dbo.collection("users").findOne(query, function (err, result) {
 			if(err) throw err;
-			if(result !== null){
+			if(result != null){
 				var upd = result;
 				if(result.xp > Math.floor(result.level * 150)){
 					message.reply(`you've leveled up! Your new level is ${upd.level + 1}.`);
@@ -458,6 +458,10 @@ async function checkCommand (message, prefix) {
 	}
 	
 	if(command === "membercount" || command === "mc"){
+		var async = {};
+		var i = 0;
+		var botCount = 0;
+		let bots = message.guild.members.filter(mem=>mem.user.bot==true).size;
 		message.channel.send({
 			"embed": {
 				"color": 65299,
@@ -465,6 +469,16 @@ async function checkCommand (message, prefix) {
 				{
 					"name":"Total members",
 					"value":`${message.guild.memberCount}`,
+					"inline":true
+				},
+				{
+					"name":"Bot count",
+					"value":`${bots}`,
+					"inline":true
+				},
+				{
+					"name":"Users",
+					"value":`${message.guild.memberCount - bots}`,
 					"inline":true
 				}
 				]
@@ -1307,7 +1321,6 @@ function setupChannel (collected, message, author) {
 		message.channel.send("That's not a channel!");
 	}
 }
-
 
 client.login(process.env.BOT_TOKEN);
 
