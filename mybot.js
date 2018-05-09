@@ -328,6 +328,7 @@ async function checkCommand (message, prefix) {
 			mongo.connect(UserURL, function(err, db) {
 				if(err) message.reply("error connecting to server!");
 				var dbo = db.db("users");
+				var sort = { "money": -1 };
 				dbo.collection("users").find().sort(sort).toArray(function(err, result) {
 					if(err) throw err;
 					sendEmbed(message, result, true);
