@@ -793,13 +793,13 @@ if (command === "gayray") {
 	const filter = response => ((response.author.id != "440524747353227275"));
 
 	message.channel.send(`Person below triple hella quadruple gay
-		AND, if they delete their message they are permanently gay, and will be reminded of that.
-		AND, this message can't be deflected.
-		AND, all cards and comebacks are null against this, and it gives you Autism Vaccines®
-		AND, no amount of emojis can block the GayRay®
-		|
-		|
-		V`).then(() => {
+AND, if they delete their message they are permanently gay, and will be reminded of that.
+AND, this message can't be deflected.
+AND, all cards and comebacks are null against this, and it gives you Autism Vaccines®
+AND, no amount of emojis can block the GayRay®
+ |
+ |
+V`).then(() => {
 			message.channel.awaitMessages(filter, { maxMatches: 1, time: 30000, errors: ['time'] })
 			.then(collected => {
 				console.log(collected.first().author);
