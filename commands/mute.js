@@ -16,10 +16,10 @@ exports.run = (client, message, args, mongo) => {
   if (!time) return message.reply(`no time was specified.`)
 
   member.addRole(muteRole.id);
-  message.channel.send(`You've muted ${member.user.tag} for ${ms(ms(time), {long:true})}`);
+  message.channel.reply ("you've muted `" +  member.user.tag + "` for " +  ms(ms(time), {long:true}));
 
   setTimeout(function() {
     member.removeRole(muteRole.id);
-    message.channel.send(`${member.user.tag} has been unmuted.`);
+    message.channel.send('`' + member.user.tag + '` has been unmuted.');
   }, ms(time));
 }
