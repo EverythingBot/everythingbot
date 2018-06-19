@@ -173,10 +173,11 @@ client.on("message", async message => {
           } else {
             var serv = defaultServer;
             serv.serverID = message.guild.id;
-            dbo.collection("servers").insert(serv, function(err, obj) {
-              if (err) throw err;
-              db.close();
-            });
+            try {
+              dbo.collection("servers").insertOne(serv);
+            } catch (err) {
+              console.log(err);
+             }
           }
         });
       }
