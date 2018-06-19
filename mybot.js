@@ -100,10 +100,11 @@ client.on("guildCreate", guild => {
     var dbo = db.db("servers");
     var serv = defaultServer;
     serv.serverID = guild.id;
-    dbo.collection("servers").insert(serv, function(err, obj) {
-      if (err) throw err;
-      db.close();
-    });
+    try {
+      dbo.collection("users").insertOne(serv);
+    } catch (err) {
+      console.log(err);
+    }
   });
   console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
   client.user.setActivity(`on ${client.guilds.size} servers | e!help`);
