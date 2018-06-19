@@ -30,7 +30,7 @@ exports.run = async function (client, message, args, mongo) {
     };
     var c = collected.first().content.toString().replace(/[<#>]/g, '');
     var x = collected.first().content;
-    if (client.channels.get(c)) {
+    if (message.guild.channels.get(c)) {
       mongo.connect(ServerURL, function(err, db) {
         var dbo = db.db("servers");
         var query = {
@@ -82,7 +82,7 @@ exports.run = async function (client, message, args, mongo) {
       });
       message.channel.send(`Guild welcome channel updated to ${x}`);
     } else {
-      message.channel.send("That's not a channel!");
+      message.channel.send("That wasn't a channel! Are you sure you said a channel name? (Ex. `#general`)");
     }
   }
 }

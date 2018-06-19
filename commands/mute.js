@@ -1,19 +1,22 @@
 exports.run = (client, message, args, mongo) => {
+
+  var ms = require("ms");
+
   const sayMessage = args.join(" ");
   if (!message.member.hasPermission("KICK_MEMBERS")) {
     return message.reply("sorry, you don't have permissions to use this.");
   }
 
   let member = message.mentions.members.first();
-  if (!member) return message.reply("That isn't a user.");
-  let muteRole = message.guild.roles.find("name", "Muted");
-  if (!muteRole) return message.reply("You haven't configured the `Muted` role yet. Please go to roles, and add `Muted` as a role. In `Muted`'s permissions, disable send messages.");
+  if (!member) return message.reply("that isn't a user.");
+  let muteRole = message.guild.roles.find("name", "eBot Mute");
+  if (!muteRole) return message.reply("the `eBot Mute` role wasn't found! Make sure you have a role sharing this name, and that it wasn't deleted.");
   let params = message.content.split(" ").slice(1);
   let time = params[1];
-  if (!time) return message.reply(`there is no time specified. Please use this command in the form of ${config.prefix}`)
+  if (!time) return message.reply(`no time was specified.`)
 
   member.addRole(muteRole.id);
-  message.channel.send(`You've been muted for ${ms(ms(time), {long:true})} ${member.user.tag}`);
+  message.channel.send(`You've muted ${member.user.tag} for ${ms(ms(time), {long:true})}`);
 
   setTimeout(function() {
     member.removeRole(muteRole.id);

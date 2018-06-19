@@ -14,7 +14,7 @@ exports.run = (client, message, args, mongo) => {
         },
         {
           name: ":laughing: Fun commands",
-          value: "meme, pickup, insult, mock, kill"
+          value: "meme, pickup, roast, mock, kill"
         },
         {
           name: ":briefcase: User commands",
