@@ -209,46 +209,44 @@ client.on("message", async message => {
     });
 
   mongo.connect(UserURL, function(err, db) {
-    var dbo = db.db("users");
-    var query = {
-      "name": message.author.tag
-    };
-    dbo.collection("users").findOne(query, function(err, result) {
-      if (err) throw err;
-      if (result != null) {
-        var upd = result;
-        if (result.xp > Math.floor(result.level * 150)) {
-          message.reply(`you've leveled up! Your new level is ${upd.level + 1}.`);
-          upd.xp = result.xp - result.level * 150;
-          upd.level += 1;
-          dbo.collection("users").update(query, upd, function(err, res) {
-            if (err) throw err;
-            db.close();
-          });
-        } else {
-          db.close();
-        }
-      } else {
-        var user = defaultUser;
-        user.name = message.author.tag;
-        if (message.author.bot === false) {
-          dbo.collection("users").findOne(query, function(err, result) {
-            if (err) throw err;
-            if (result == null) {
-              dbo.collection("users").insertOne(user, function(err, obj) {
+        var dbo = db.db("users");
+        var query = {
+          "name": message.author.tag
+        };
+        dbo.collection("users").findOne(query, function(err, result) {
+          if (err) throw err;
+          if (result != null) {
+            var upd = result;
+            if (result.xp > Math.floor(result.level * 150)) {
+              message.reply(`you've leveled up! Your new level is ${upd.level + 1}.`);
+              upd.xp = result.xp - result.level * 150;
+              upd.level += 1;
+              dbo.collection("users").update(query, upd, function(err, res) {
                 if (err) throw err;
                 db.close();
               });
             } else {
               db.close();
             }
-          });
-        } else {
-          db.close();
-        }
-      }
-    });
-
+          } else {
+            if (message.author.bot === false) {
+              dbo.collection("users").findOne(query, function(err, result) {
+                if (err) throw err;
+                if (result == null) {
+                  var user = defaultUser;
+                  user.name = message.author.tag;
+                  try {
+                    dbo.collection("users").insertOne(user);
+                  } catch (err) {
+                    console.log(err);
+                  }
+                }
+                db.close();
+              });
+            } else
+              db.close();
+          }
+        });
   });
 });
 
