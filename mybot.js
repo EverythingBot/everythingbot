@@ -157,62 +157,69 @@ client.on("guildDelete", guild => {
 });
 
 client.on("message", async message => {
-      if (message.guild === null)
-        return;
+  if (message.guild === null)
+    return;
 
-      //Creating a muted role, for muting... Also going through every text channel and making sure eBot Mute can't talk!
-      if (!message.guild.roles.find("name", "eBot Mute")) {
-        message.member.guild.createRole({
-            name: 'eBot Mute',
-            color: 1,
-            hoist: false,
-            mentionable: false,
-            permissions: ["READ_MESSAGE_HISTORY", "VIEW_CHANNEL"]
-          },
-          'Required for EverythingBot muting');
-      } else {
-        let ebot = message.guild.roles.find("name", "eBot Mute");
-        var chann = message.guild.channels.array();
-        for (var i = 0; i < chann.length; i++) {
-          if (chann[i].type == "text") {
-            chann[i].overwritePermissions(
-                ebot.id,
-                {SEND_MESSAGES: false},
-                'Required for EverythingBot muting'
-            );
+  //Creating a muted role, for muting... Also going through every text channel and making sure eBot Mute can't talk!
+  if (!message.guild.roles.find("name", "eBot Mute")) {
+    message.member.guild.createRole({
+        name: 'eBot Mute',
+        color: 1,
+        hoist: false,
+        mentionable: false,
+        permissions: ["READ_MESSAGE_HISTORY", "VIEW_CHANNEL"]
+      },
+      'Required for EverythingBot muting');
+      addPermission(message);
+  } else
+    addPermission(message);
+
+  mongo.connect(ServerURL, function(err, db) {
+    var dbo = db.db("servers");
+    var query = {
+      "serverID": message.guild.id
+    };
+    if (message.guild !== null) {
+      dbo.collection("servers").find(query).toArray(function(err, result) {
+        if (err) throw err;
+        if (result[0] != null) {
+          prefix = result[0].prefix;
+          checkCommand(message, prefix);
+          db.close();
+        } else {
+          var serv = defaultServer;
+          serv.serverID = message.guild.id;
+          try {
+            dbo.collection("servers").insertOne(serv);
+          } catch (err) {
+            console.log(err);
           }
         }
-      }
+      });
+    }
+  });
 
-mongo.connect(ServerURL, function(err, db) {
-  var dbo = db.db("servers");
-  var query = {
-    "serverID": message.guild.id
-  };
-  if (message.guild !== null) {
-    dbo.collection("servers").find(query).toArray(function(err, result) {
-      if (err) throw err;
-      if (result[0] != null) {
-        prefix = result[0].prefix;
-        checkCommand(message, prefix);
-        db.close();
-      } else {
-        var serv = defaultServer;
-        serv.serverID = message.guild.id;
-        try {
-          dbo.collection("servers").insertOne(serv);
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    });
+  if (message.mentions.members.first()) {
+    if (message.mentions.members.first().user.id === client.user.id) mentionCommand(message, message.mentions.members.first());
   }
 });
 
-if (message.mentions.members.first()) {
-  if (message.mentions.members.first().user.id === client.user.id) mentionCommand(message, message.mentions.members.first());
+function addPermission(message) {
+  let ebot = message.guild.roles.find("name", "eBot Mute");
+  var chann = message.guild.channels.array();
+  for (var i = 0; i < chann.length; i++) {
+    if (chann[i].type == "text") {
+      //Check if that channel allows eBot Mute to talk, if it can, DISABLE IT!
+      if (!chann[i].permissionsFor(ebot.id))
+        chann[i].overwritePermissions(
+          ebot.id, {
+            SEND_MESSAGES: false
+          },
+          'Required for EverythingBot muting'
+        );
+    }
+  }
 }
-});
 
 client.on("message", async message => {
   mongo.connect(UserURL, function(err, db) {
