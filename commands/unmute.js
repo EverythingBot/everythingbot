@@ -6,9 +6,12 @@ exports.run = (client, message, args, mongo) => {
 
   let member = message.mentions.members.first();
   if (!member) return message.reply("That isn't a user.");
-  let muteRole = message.guild.roles.find("name", "Muted");
-  if (!muteRole) return msg.reply("You haven't configured the `Muted` role yet. Please go to roles, and add `Muted` as a role. In `Muted`'s permissions, disable send messages.");
+  let muteRole = message.guild.roles.find("name", "eBot Mute");
+  if (!muteRole) return message.reply("You haven't configured the `eBot Mute` role yet. Please go to roles, and add `eBot Mute` as a role. In `eBot Mute`'s permissions, disable send messages.");
 
-  member.removeRole(muteRole.id);
-  message.channel.send(`${member.user.tag} has been unmuted.`);
+  if (member.roles.find("name", "eBot Mute")) {
+    member.removeRole(muteRole.id);
+    message.channel.send("`" + member.user.tag + "` has been unmuted.");
+  } else
+    message.channel.send("`" + member.user.tag + "` isn't muted!");
 }
