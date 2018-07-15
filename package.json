@@ -16,11 +16,15 @@
     "mongodb": "^3.0.7",
     "ms": "^2.1.1",
     "node-gd": "^1.5.4",
-    "npm": "^6.0.0"
+    "npm": "^6.0.0",
+    "short-number": "^1.0.6"
   },
   "devDependencies": {},
   "engines": {
     "node": "8.11.1"
   },
-  "cacheDirectories": ["client/node_modules", "server/node_modules"]
+  "cacheDirectories": [
+    "client/node_modules",
+    "server/node_modules"
+  ]
 }
