@@ -5,6 +5,7 @@ exports.run = (client, message, args, mongo) => {
   var fonTwo = ".fonts/FranklinGothicMedium.fnt";
   var UserURL = process.env.USER;
   var Jimp = require("jimp");
+  var shortNumber = require('short-number');
 
   mongo.connect(UserURL, function(err, db) {
     if (err) throw err;
@@ -56,11 +57,11 @@ exports.run = (client, message, args, mongo) => {
         image.print(font, parseInt(process.env.NAME_X), parseInt(process.env.NAME_Y), tag).getBuffer(Jimp.MIME_JPEG, function(err, img) {
           if (err) throw err;
           Jimp.loadFont(fonTwo).then(function(font) {
-            image.print(font, 36, 250, `XP ${xp} / ${level*150}`).getBuffer(Jimp.MIME_JPEG, function(err, img) {
+            image.print(font, 36, 250, `XP ${shortNumber(xp)} / ${shortNumber(level*150)}`).getBuffer(Jimp.MIME_JPEG, function(err, img) {
               if (err) throw err;
               image.print(font, 36, 330, `Level ${level}`).getBuffer(Jimp.MIME_JPEG, function(err, img) {
                 if (err) throw err;
-                image.print(font, 36, 410, `$${money}`).getBuffer(Jimp.MIME_JPEG, function(err, img) {
+                image.print(font, 36, 410, `$${shortNumber(money)}`).getBuffer(Jimp.MIME_JPEG, function(err, img) {
                   if (err) throw err;
                   image.scale(0.35).write("/app/tempBal.jpg");
                   mes.channel.send("", {
