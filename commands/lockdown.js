@@ -49,6 +49,7 @@ exports.run = (client, message, args, mongo) => {
           db.close();
         });
       } else {
+        message.reply("command usage is `lockdown on/off`");
         db.close();
       }
     });
