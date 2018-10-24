@@ -16,7 +16,7 @@ exports.run = (client, message, args, mongo) => {
       ID = message.author.id;
       tags = message.author.tag;
       query = {
-        name: message.author.tag
+        name: message.author.id
       };
     } else {
       if (args[0].toString().includes('@')) {
@@ -25,7 +25,7 @@ exports.run = (client, message, args, mongo) => {
           if (client.users.get(ID)) {
             tags = message.guild.member(ID).user.tag;
             query = {
-              name: message.guild.member(ID).user.tag
+              name: message.guild.member(ID).user.id
             };
           }
         }
