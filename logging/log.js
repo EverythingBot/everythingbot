@@ -14,8 +14,8 @@ exports.run = (message, mongo, srvURL, clURL, type, oldMessage) => {
       if (err)
         throw err;
 
-      if(serv.logChannel == null)
-      return;
+      if (serv.logChannel == null)
+        return;
 
       if (message.guild.channels.get(serv.logChannel.toString()) == null)
         return;
@@ -24,50 +24,44 @@ exports.run = (message, mongo, srvURL, clURL, type, oldMessage) => {
         var l = message.guild.channels.get(serv.logChannel.toString());
 
         var loggedMessage = {
-          embed: {
-            color: 16711680,
-            description: `Message sent by ${message.author.username} in ${message.channel.name} was deleted`,
-            fields: [{
-              name: "Message",
-              value: `${message.content}`
-            }]
+          "embed": {
+            "color": 16711680,
+            "author": {
+              "name": `${message.author.username}`,
+              "icon_url": `${message.author.displayAvatarURL}`
+            },
+            "description": `Message sent in ${message.channel.name} was deleted`,
+            "fields": [{
+              "name": "Message",
+              "value": `${message.content}`
+            }],
+            "timestamp": new Date()
           }
         };
 
         l.send(loggedMessage);
-        /*
-        if (message.attachments.array().length > 0) {
-          var attachment = message.attachments.array();
-          //Testing the image... thing
-          var deletePic = {
-            "embed": {
-              "title": `Message deleted contained an attachment`,
-              "color": 16711680,
-              "image": {
-                "value": `${attachment[0].url}`
-              }
-            }
-          };
-          l.send(deletePic);
-        }
-        */
       }
 
       if (type == "edit") {
         var l = message.guild.channels.get(serv.logChannel.toString());
         var loggedMessage = {
-          embed: {
-            color: 16776960,
-            description: `Message sent by ${message.author.username} in ${message.channel.name} was edited`,
-            fields: [{
-                name: "Old Message",
-                value: `${oldMessage.content}`
+          "embed": {
+            "color": 16776960,
+            "author": {
+              "name": `${message.author.username}`,
+              "icon_url": `${message.author.displayAvatarURL}`
+            },
+            "description": `Message sent by ${message.author.username} in ${message.channel.name} was edited`,
+            "fields": [{
+                "name": "Old Message",
+                "value": `${oldMessage.content}`
               },
               {
-                name: "New Message",
-                value: `${message.content}`
+                "name": "New Message",
+                "value": `${message.content}`
               }
-            ]
+            ],
+            "timestamp": new Date()
           }
         };
         l.send(loggedMessage);
