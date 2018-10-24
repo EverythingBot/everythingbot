@@ -26,6 +26,7 @@ var defaultServer = {
 }
 
 var defaultUser = {
+  _id: null,
   "name": null,
   "money": 0,
   "xp": 0,
@@ -301,6 +302,7 @@ client.on("message", async message => {
       } else {
         if (message.author.bot === false) {
               var user = defaultUser;
+              user._id = message.author.id;
               user.name = message.author.id;
               try {
                 dbo.collection("users").insertOne(user);
