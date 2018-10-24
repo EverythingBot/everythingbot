@@ -3,9 +3,9 @@ exports.run = (client, message, args, mongo) => {
   var Jimp = require('jimp');
 
   if (message.mentions.members.first()) {
-    mirrorFunction(message, message.mentions.members.first().user.avatarURL);
+    mirrorFunction(message, message.mentions.members.first().user.displayAvatarURL);
   } else if (args[0] == null) {
-    mirrorFunction(message, message.author.avatarURL);
+    mirrorFunction(message, message.author.displayAvatarURL);
   } else mirrorFunction(message, args[0]);
 
   function mirrorFunction(message, im) {

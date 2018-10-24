@@ -3,9 +3,9 @@ exports.run = (client, message, args, mongo) => {
   var Jimp = require("jimp");
 
   if (message.mentions.members.first()) {
-    sepiaFunction(message, message.mentions.members.first().user.avatarURL);
+    sepiaFunction(message, message.mentions.members.first().user.displayAvatarURL);
   } else if (args[0] == null) {
-    sepiaFunction(message, message.author.avatarURL);
+    sepiaFunction(message, message.author.displayAvatarURL);
   } else sepiaFunction(message, args[0]);
 
   function sepiaFunction(message, im) {

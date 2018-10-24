@@ -3,9 +3,9 @@ exports.run = (client, message, args, mongo) => {
   var Jimp = require('jimp');
 
   if (message.mentions.members.first()) {
-    invertFunction(message, message.mentions.members.first().user.avatarURL);
+    invertFunction(message, message.mentions.members.first().user.displayAvatarURL);
   } else if (args[0] == null) {
-    invertFunction(message, message.author.avatarURL);
+    invertFunction(message, message.author.displayAvatarURL);
   } else invertFunction(message, args[0]);
 
   function invertFunction(message, im) {

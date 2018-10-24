@@ -3,9 +3,9 @@ exports.run = (client, message, args, mongo) => {
   var Jimp = require('jimp');
 
   if (message.mentions.members.first()) {
-    posterFunction(message, args[0], message.mentions.members.first().user.avatarURL);
+    posterFunction(message, args[0], message.mentions.members.first().user.displayAvatarURL);
   } else if (args[1] == null && args[0] != null) {
-    posterFunction(message, args[0], message.author.avatarURL);
+    posterFunction(message, args[0], message.author.displayAvatarURL);
   } else if (args[0] != null) {
     posterFunction(message, args[0], args[1]);
   } else {

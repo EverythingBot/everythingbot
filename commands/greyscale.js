@@ -3,9 +3,9 @@ exports.run = (client, message, args, mongo) => {
   var Jimp = require('jimp');
 
   if (message.mentions.members.first()) {
-    greyscaleFunction(message, message.mentions.members.first().user.avatarURL);
+    greyscaleFunction(message, message.mentions.members.first().user.displayAvatarURL);
   } else if (args[0] == null) {
-    greyscaleFunction(message, message.author.avatarURL);
+    greyscaleFunction(message, message.author.displayAvatarURL);
   } else greyscaleFunction(message, args[0]);
 
 

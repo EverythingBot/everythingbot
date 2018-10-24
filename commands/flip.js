@@ -3,9 +3,9 @@ exports.run = (client, message, args, mongo) => {
   var Jimp = require('jimp');
 
   if (message.mentions.members.first()) {
-    flipFunction(message, message.mentions.members.first().user.avatarURL);
+    flipFunction(message, message.mentions.members.first().user.displayAvatarURL);
   } else if (args[0] == null) {
-    flipFunction(message, message.author.avatarURL);
+    flipFunction(message, message.author.displayAvatarURL);
   } else flipFunction(message, args[0]);
 
   function flipFunction(message, im) {
