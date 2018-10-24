@@ -98,24 +98,20 @@ client.on("guildCreate", guild => {
   });
   defaultChannel.send("Thanks for inviting me to the server! I'm **EverythingBot**. If you need any help, type `e!help`. \r\nIf you have any questions, join the support server https://discord.gg/yuSHrjr");
   mongo.connect(ServerURL, {
-      useNewUrlParser: true
-    }, function(err, db) {
-      if (err) console.error('Error occurred', err);
+    useNewUrlParser: true
+  }, function(err, db) {
+    if (err) console.error('Error occurred', err);
 
-      var dbo = db.db("servers");
-      var serv = defaultServer;
-      serv.serverID = guild.id;
-        try {
-          dbo.collection("servers").insertOne(serv);
-          db.close();
-        } catch (e) {
-          console.log(e);
-        }
-      });
-  }
-  catch (err) {
-    console.log(err);
-  }
+    var dbo = db.db("servers");
+    var serv = defaultServer;
+    serv.serverID = guild.id;
+    try {
+      dbo.collection("servers").insertOne(serv);
+      db.close();
+    } catch (e) {
+      console.log(e);
+    }
+  });
 });
 console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
 client.user.setActivity(`on ${client.guilds.size} servers | e!help`);
