@@ -112,13 +112,13 @@ client.on("guildCreate", guild => {
 
 client.on("guildMemberAdd", guild => {
   mongo.connect(ServerURL, { useNewUrlParser: true }, function(err, db) {
-    if (err) throw err;
+      if (err) console.error('Error occurred', err);
     var dbo = db.db("servers");
     var query = {
       "serverID": guild.guild.id
     };
     dbo.collection("servers").find(query).toArray(function(err, result) {
-      if (err) throw err;
+        if (err) console.error('Error occurred', err);
       if (result[0].welcomeChannel !== null) {
         guild.guild.channels.get(result[0].welcomeChannel).send(`Welcome to __**${guild.guild.name}**__, <@${guild.user.id}>!`);
       }
@@ -138,13 +138,13 @@ client.on("guildMemberAdd", guild => {
 
 client.on("guildMemberRemove", guild => {
   mongo.connect(ServerURL, { useNewUrlParser: true }, function(err, db) {
-    if (err) throw err;
+      if (err) console.error('Error occurred', err);
     var dbo = db.db("servers");
     var query = {
       "serverID": guild.guild.id
     };
     dbo.collection("servers").find(query).toArray(function(err, result) {
-      if (err) throw err;
+      if (err) console.error('Error occurred', err);
       if (result[0].welcomeChannel !== null) {
         guild.guild.channels.get(result[0].welcomeChannel).send(`**${guild.user.tag}** just left. See you later!`);
         db.close();
@@ -185,7 +185,7 @@ client.on("message", async message => {
     };
     if (message.guild !== null) {
       dbo.collection("servers").find(query).toArray(function(err, result) {
-        if (err) throw err;
+        if (err) console.error('Error occurred', err);
         if (result[0] != null) {
           prefix = result[0].prefix;
           checkCommand(message, prefix);
@@ -235,12 +235,12 @@ client.on("message", async message => {
       "name": message.author.id
     };
     dbo.collection("users").findOne(query, function(err, result) {
-      if (err) throw err;
+      if (err) console.error('Error occurred', err);
       if (result !== null) {
         var upd = result;
         upd.xp = result.xp + 1;
         dbo.collection("users").update(query, upd, function(err, res) {
-          if (err) throw err;
+            if (err) console.error('Error occurred', err);
           db.close();
         });
       } else {
@@ -255,7 +255,7 @@ client.on("message", async message => {
       "name": message.author.id
     };
     dbo.collection("users").findOne(query, function(err, result) {
-      if (err) throw err;
+      if (err) console.error('Error occurred', err);
       if (result != null) {
         var upd = result;
         if (result.xp > Math.floor(result.level * 150)) {
@@ -263,7 +263,7 @@ client.on("message", async message => {
           upd.xp = result.xp - result.level * 150;
           upd.level += 1;
           dbo.collection("users").update(query, upd, function(err, res) {
-            if (err) throw err;
+              if (err) console.error('Error occurred', err);
             db.close();
           });
         } else {
@@ -272,7 +272,7 @@ client.on("message", async message => {
       } else {
         if (message.author.bot === false) {
           dbo.collection("users").findOne(query, function(err, result) {
-            if (err) throw err;
+              if (err) console.error('Error occurred', err);
             if (result == null) {
               var user = defaultUser;
               user.name = message.author.id;
