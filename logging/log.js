@@ -14,6 +14,9 @@ exports.run = (message, mongo, srvURL, clURL, type, oldMessage) => {
       if (err)
         throw err;
 
+      if(serv.logChannel == null)
+      return;
+
       if (message.guild.channels.get(serv.logChannel.toString()) == null)
         return;
 
