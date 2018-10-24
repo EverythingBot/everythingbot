@@ -107,6 +107,7 @@ client.on("guildCreate", guild => {
     serv.serverID = guild.id;
     try {
       dbo.collection("servers").insertOne(serv);
+      db.close();
     } catch (err) {
       console.log(err);
     }
@@ -209,6 +210,7 @@ client.on("message", async message => {
           serv.serverID = message.guild.id;
           try {
             dbo.collection("servers").insertOne(serv);
+            db.close();
           } catch (err) {
             console.log(err);
           }
@@ -301,6 +303,7 @@ client.on("message", async message => {
               user.name = message.author.id;
               try {
                 dbo.collection("users").insertOne(user);
+                db.close();
               } catch (err) {
                 console.log(err);
               }
