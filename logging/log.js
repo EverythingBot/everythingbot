@@ -51,7 +51,7 @@ exports.run = (message, mongo, srvURL, clURL, type, oldMessage) => {
               "name": `${message.author.username}`,
               "icon_url": `${message.author.displayAvatarURL}`
             },
-            "description": `Message sent by ${message.author.username} in ${message.channel.name} was edited`,
+            "description": `Message sent in ${message.channel.name} was edited`,
             "fields": [{
                 "name": "Old Message",
                 "value": `${oldMessage.content}`
