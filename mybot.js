@@ -50,34 +50,34 @@ var helpMenu = {
     color: 3447003,
     description: "EverythingBot, does literally everything (Still in production, currently doesn't do much). Here's the list of commands",
     fields: [{
-      name: ":straight_ruler:  Admin/Mod",
-      value: "clear, kick, ban, unban, mute, unmute, setprefix, setup, disable, lockdown"
-    },
-    {
-      name: ":camera:  Image commands",
-      value: "poster, sepia, greyscale, invert, flip, mirror, blur, rotate"
-    },
-    {
-      name: ":laughing: Fun commands",
-      value: "meme, pickup, roast, mock, kill"
-    },
-    {
-      name: ":briefcase: User commands",
-      value: "bal, daily, leaderboard"
-    },
-    {
-      name: ":regional_indicator_t: :regional_indicator_e: :regional_indicator_x: :regional_indicator_t:  commands",
-      value: "ping, bigtext, invite, server"
-    },
-    {
-      name: ":thinking: Etc commands",
-      value: "credits, membercount"
+        name: ":straight_ruler:  Admin/Mod",
+        value: "clear, kick, ban, unban, mute, unmute, setprefix, setup, disable, lockdown"
+      },
+      {
+        name: ":camera:  Image commands",
+        value: "poster, sepia, greyscale, invert, flip, mirror, blur, rotate"
+      },
+      {
+        name: ":laughing: Fun commands",
+        value: "meme, pickup, roast, mock, kill"
+      },
+      {
+        name: ":briefcase: User commands",
+        value: "bal, daily, leaderboard"
+      },
+      {
+        name: ":regional_indicator_t: :regional_indicator_e: :regional_indicator_x: :regional_indicator_t:  commands",
+        value: "ping, bigtext, invite, server"
+      },
+      {
+        name: ":thinking: Etc commands",
+        value: "credits, membercount"
+      }
+    ],
+    footer: {
+      text: `This guild's prefix is: ${prefix}`
     }
-  ],
-  footer: {
-    text: `This guild's prefix is: ${prefix}`
   }
-}
 };
 
 client.on("ready", () => {
@@ -96,7 +96,12 @@ client.on("guildCreate", guild => {
     }
   });
   defaultChannel.send("Thanks for inviting me to the server! I'm **EverythingBot**. If you need any help, type `e!help`. \r\nIf you have any questions, join the support server https://discord.gg/yuSHrjr");
-  mongo.connect(ServerURL, { useNewUrlParser: true }, function(err, db) {
+  mongo.connect(ServerURL, {
+    useNewUrlParser: true
+  }, function(err, db) {
+
+    if (err) console.error('Error occurred', err);
+
     var dbo = db.db("servers");
     var serv = defaultServer;
     serv.serverID = guild.id;
@@ -111,25 +116,27 @@ client.on("guildCreate", guild => {
 });
 
 client.on("guildMemberAdd", guild => {
-  mongo.connect(ServerURL, { useNewUrlParser: true }, function(err, db) {
-      if (err) console.error('Error occurred', err);
+  mongo.connect(ServerURL, {
+    useNewUrlParser: true
+  }, function(err, db) {
+    if (err) console.error('Error occurred', err);
     var dbo = db.db("servers");
     var query = {
       "serverID": guild.guild.id
     };
     dbo.collection("servers").find(query).toArray(function(err, result) {
-        if (err) console.error('Error occurred', err);
+      if (err) console.error('Error occurred', err);
       if (result[0].welcomeChannel !== null) {
         guild.guild.channels.get(result[0].welcomeChannel).send(`Welcome to __**${guild.guild.name}**__, <@${guild.user.id}>!`);
       }
-      if(result[0].locked != null && result[0].locked==true) {
+      if (result[0].locked != null && result[0].locked == true) {
         let muteRole = guild.guild.roles.find(x => x.name === "eBot Mute");
         guild.addRole(muteRole.id);
       }
       if (result[0].welcomeRole !== null) {
         let r = guild.guild.roles.find(x => x.name === result[0].welcomeRole);
         guild.addRole(r)
-        .catch(console.error);
+          .catch(console.error);
       }
       db.close();
     });
@@ -137,8 +144,10 @@ client.on("guildMemberAdd", guild => {
 });
 
 client.on("guildMemberRemove", guild => {
-  mongo.connect(ServerURL, { useNewUrlParser: true }, function(err, db) {
-      if (err) console.error('Error occurred', err);
+  mongo.connect(ServerURL, {
+    useNewUrlParser: true
+  }, function(err, db) {
+    if (err) console.error('Error occurred', err);
     var dbo = db.db("servers");
     var query = {
       "serverID": guild.guild.id
@@ -174,11 +183,16 @@ client.on("message", async message => {
         permissions: ["READ_MESSAGE_HISTORY", "VIEW_CHANNEL"]
       },
       'Required for EverythingBot muting');
-      addPermission(message);
+    addPermission(message);
   } else
     addPermission(message);
 
-  mongo.connect(ServerURL, { useNewUrlParser: true }, function(err, db) {
+  mongo.connect(ServerURL, {
+    useNewUrlParser: true
+  }, function(err, db) {
+
+    if (err) console.error('Error occurred', err);
+
     var dbo = db.db("servers");
     var query = {
       "serverID": message.guild.id
@@ -226,10 +240,12 @@ function addPermission(message) {
 }
 
 client.on("message", async message => {
-  if(message.author.bot)
+  if (message.author.bot)
     return;
 
-  mongo.connect(UserURL, { useNewUrlParser: true }, function(err, d) {
+  mongo.connect(UserURL, {
+    useNewUrlParser: true
+  }, function(err, d) {
     if (err) console.error('Error occurred', err);
 
     var dbo = d.db("new_user");
@@ -242,7 +258,7 @@ client.on("message", async message => {
         var upd = result;
         upd.xp = result.xp + 1;
         dbo.collection("users").update(query, upd, function(err, res) {
-            if (err) console.error('Error occurred', err);
+          if (err) console.error('Error occurred', err);
           db.close();
         });
       } else {
@@ -251,7 +267,12 @@ client.on("message", async message => {
     });
   });
 
-  mongo.connect(UserURL, { useNewUrlParser: true }, function(err, db) {
+  mongo.connect(UserURL, {
+    useNewUrlParser: true
+  }, function(err, db) {
+
+    if (err) console.error('Error occurred', err);
+
     var dbo = db.db("new_user");
     var query = {
       "name": message.author.id
@@ -265,7 +286,7 @@ client.on("message", async message => {
           upd.xp = result.xp - result.level * 150;
           upd.level += 1;
           dbo.collection("users").update(query, upd, function(err, res) {
-              if (err) console.error('Error occurred', err);
+            if (err) console.error('Error occurred', err);
             db.close();
           });
         } else {
@@ -274,7 +295,7 @@ client.on("message", async message => {
       } else {
         if (message.author.bot === false) {
           dbo.collection("users").findOne(query, function(err, result) {
-              if (err) console.error('Error occurred', err);
+            if (err) console.error('Error occurred', err);
             if (result == null) {
               var user = defaultUser;
               user.name = message.author.id;
@@ -287,7 +308,7 @@ client.on("message", async message => {
             db.close();
           });
         } else
-        db.close();
+          db.close();
       }
     });
   });
@@ -308,12 +329,12 @@ async function checkCommand(message, prefix) {
 
   if (message.content.indexOf(prefix) !== 0) return;
 
-  try{
+  try {
     const args = message.content.slice(prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
     let file = require(`./commands/${command}.js`);
     file.run(client, message, args, mongo, ServerURL, UserURL);
-  } catch (err){
+  } catch (err) {
     console.log(err);
   }
 
@@ -331,79 +352,79 @@ async function checkCommand(message, prefix) {
         color: 3447003,
         description: "Welcome to the credits!",
         fields: [{
-          name: "Thanks to Popestar#0545",
-          value: "For most of the insults."
-        },
-        {
-          name: "Thanks to PackersRuleGoPack#2232",
-          value: "Source code, and permission to revive the bot."
-        },
-        {
-          name: "Yer Good Ol' Loli Grandpappy#8486",
-          value: "Revived the bot!"
+            name: "Thanks to Popestar#0545",
+            value: "For most of the insults."
+          },
+          {
+            name: "Thanks to PackersRuleGoPack#2232",
+            value: "Source code, and permission to revive the bot."
+          },
+          {
+            name: "Yer Good Ol' Loli Grandpappy#8486",
+            value: "Revived the bot!"
+          }
+        ],
+        footer: {
+          text: "EverythingBot"
         }
-      ],
-      footer: {
-        text: "EverythingBot"
       }
-    }
+    });
+  }
+  /*
+  if (command === "gayray") {
+  message.channel.send();
+  const filter = response => ((response.author.id != "440524747353227275"));
+
+  message.channel.send(`Person below triple hella quadruple gay
+  AND, if they delete their message they are permanently gay, and will be reminded of that.
+  AND, this message can't be deflected.
+  AND, all cards and comebacks are null against this, and it gives you Autism Vaccines®
+  AND, no amount of emojis can block the GayRay®
+  |
+  |
+  V`).then(() => {
+  message.channel.awaitMessages(filter, {
+  maxMatches: 1,
+  time: 30000,
+  errors: ['time']
+  })
+  .then(collected => {
+  console.log(collected.first().author);
+  message.channel.send(`${collected.first().author} has the gay!`)
+  collected.first().member.setNickname('Hella Gay Man')
+  .then(console.log())
+  .catch(console.error);
+  })
+  .catch(collected => {
+  message.channel.send('Looks like no-one is gay. Bye you str8 people.');
   });
-}
-/*
-if (command === "gayray") {
-message.channel.send();
-const filter = response => ((response.author.id != "440524747353227275"));
+  });
+  }
+  */
 
-message.channel.send(`Person below triple hella quadruple gay
-AND, if they delete their message they are permanently gay, and will be reminded of that.
-AND, this message can't be deflected.
-AND, all cards and comebacks are null against this, and it gives you Autism Vaccines®
-AND, no amount of emojis can block the GayRay®
-|
-|
-V`).then(() => {
-message.channel.awaitMessages(filter, {
-maxMatches: 1,
-time: 30000,
-errors: ['time']
-})
-.then(collected => {
-console.log(collected.first().author);
-message.channel.send(`${collected.first().author} has the gay!`)
-collected.first().member.setNickname('Hella Gay Man')
-.then(console.log())
-.catch(console.error);
-})
-.catch(collected => {
-message.channel.send('Looks like no-one is gay. Bye you str8 people.');
-});
-});
-}
-*/
-
-if (command === "invite") {
-  message.channel.send(`You can invite me with this link: https://discordapp.com/api/oauth2/authorize?client_id=440524747353227275&permissions=8&scope=bot`);
-}
+  if (command === "invite") {
+    message.channel.send(`You can invite me with this link: https://discordapp.com/api/oauth2/authorize?client_id=440524747353227275&permissions=8&scope=bot`);
+  }
 }
 
 client.on("messageDelete", async message => {
-  if(message.guild == null || message.author.bot)
+  if (message.guild == null || message.author.bot)
     return;
-  try{
+  try {
     let file = require(`./logging/log.js`);
     file.run(message, mongo, ServerURL, UserURL, "delete");
-  } catch (err){
+  } catch (err) {
     console.log(err);
   }
 });
 
-client.on("messageUpdate", async (oldMsg,newMsg) => {
-  if(newMsg.guild == null || newMsg.author.bot)
+client.on("messageUpdate", async (oldMsg, newMsg) => {
+  if (newMsg.guild == null || newMsg.author.bot)
     return;
-  try{
+  try {
     let file = require(`./logging/log.js`);
     file.run(newMsg, mongo, ServerURL, UserURL, "edit", oldMsg);
-  } catch (err){
+  } catch (err) {
     console.log(err);
   }
 });
