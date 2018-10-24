@@ -99,7 +99,6 @@ client.on("guildCreate", guild => {
   mongo.connect(ServerURL, {
     useNewUrlParser: true
   }, function(err, db) {
-
     if (err) console.error('Error occurred', err);
 
     var dbo = db.db("servers");
@@ -107,9 +106,11 @@ client.on("guildCreate", guild => {
     serv.serverID = guild.id;
     try {
       dbo.collection("servers").insertOne(serv);
+      db.close();
     } catch (err) {
       console.log(err);
     }
+    db.close();
   });
   console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
   client.user.setActivity(`on ${client.guilds.size} servers | e!help`);
@@ -209,6 +210,7 @@ client.on("message", async message => {
           serv.serverID = message.guild.id;
           try {
             dbo.collection("servers").insertOne(serv);
+            db.close();
           } catch (err) {
             console.log(err);
           }
@@ -301,11 +303,11 @@ client.on("message", async message => {
               user.name = message.author.id;
               try {
                 dbo.collection("users").insertOne(user);
+                db.close();
               } catch (err) {
                 console.log(err);
               }
             }
-            db.close();
           });
         } else
           db.close();
