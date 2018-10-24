@@ -26,6 +26,7 @@ var defaultServer = {
 }
 
 var defaultUser = {
+  _id: null
   "name": null,
   "money": 0,
   "xp": 0,
@@ -97,23 +98,27 @@ client.on("guildCreate", guild => {
   });
   defaultChannel.send("Thanks for inviting me to the server! I'm **EverythingBot**. If you need any help, type `e!help`. \r\nIf you have any questions, join the support server https://discord.gg/yuSHrjr");
   mongo.connect(ServerURL, {
-    useNewUrlParser: true
-  }, function(err, db) {
-    if (err) console.error('Error occurred', err);
+      useNewUrlParser: true
+    }, function(err, db) {
+      if (err) console.error('Error occurred', err);
 
-    var dbo = db.db("servers");
-    var serv = defaultServer;
-    serv.serverID = guild.id;
-    try {
-      dbo.collection("servers").insertOne(serv);
-      db.close();
-    } catch (err) {
-      console.log(err);
-    }
-    db.close();
-  });
-  console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
-  client.user.setActivity(`on ${client.guilds.size} servers | e!help`);
+      var dbo = db.db("servers");
+      var serv = defaultServer;
+      serv.serverID = guild.id;
+      try {
+        try {
+          dbo.collection("servers").insertOne(serv);
+        } catch (e) {
+          console.log(e);
+        }
+      }); db.close();
+  }
+  catch (err) {
+    console.log(err);
+  }
+});
+console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
+client.user.setActivity(`on ${client.guilds.size} servers | e!help`);
 });
 
 client.on("guildMemberAdd", guild => {
@@ -211,8 +216,8 @@ client.on("message", async message => {
           try {
             dbo.collection("servers").insertOne(serv);
             db.close();
-          } catch (err) {
-            console.log(err);
+          } catch (e) {
+            console.log(e);
           }
         }
       });
@@ -300,12 +305,13 @@ client.on("message", async message => {
             if (err) console.error('Error occurred', err);
             if (result == null) {
               var user = defaultUser;
+              user._id = message.author.id;
               user.name = message.author.id;
               try {
                 dbo.collection("users").insertOne(user);
                 db.close();
-              } catch (err) {
-                console.log(err);
+              } catch (e) {
+                console.log(e);
               }
             }
           });
