@@ -9,7 +9,7 @@ exports.run = (client, message, args, mongo) => {
 
   mongo.connect(UserURL, function(err, db) {
     if (err) throw err;
-    var dbo = db.db("new_user");
+    var dbo = db.db("users");
     var qeury = {};
     var ID;
     if (args[0] == null) {
