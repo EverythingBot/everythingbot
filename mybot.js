@@ -232,7 +232,7 @@ client.on("message", async message => {
   mongo.connect(UserURL, { useNewUrlParser: true }, function(err, db) {
     var dbo = db.db("users");
     var query = {
-      "name": message.author.tag
+      "name": message.author.id
     };
     dbo.collection("users").findOne(query, function(err, result) {
       if (err) throw err;
@@ -252,7 +252,7 @@ client.on("message", async message => {
   mongo.connect(UserURL, { useNewUrlParser: true }, function(err, db) {
     var dbo = db.db("users");
     var query = {
-      "name": message.author.tag
+      "name": message.author.id
     };
     dbo.collection("users").findOne(query, function(err, result) {
       if (err) throw err;
@@ -275,7 +275,7 @@ client.on("message", async message => {
             if (err) throw err;
             if (result == null) {
               var user = defaultUser;
-              user.name = message.author.tag;
+              user.name = message.author.id;
               try {
                 dbo.collection("users").insertOne(user);
               } catch (err) {
