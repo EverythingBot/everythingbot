@@ -230,7 +230,7 @@ client.on("message", async message => {
     return;
 
   mongo.connect(UserURL, { useNewUrlParser: true }, function(err, db) {
-    var dbo = db.db("users");
+    var dbo = db.db("new_user");
     var query = {
       "name": message.author.id
     };
@@ -250,7 +250,7 @@ client.on("message", async message => {
   });
 
   mongo.connect(UserURL, { useNewUrlParser: true }, function(err, db) {
-    var dbo = db.db("users");
+    var dbo = db.db("new_user");
     var query = {
       "name": message.author.id
     };
