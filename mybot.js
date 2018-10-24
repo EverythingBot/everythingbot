@@ -259,10 +259,14 @@ client.on("message", async message => {
       if (result !== null) {
         var upd = result;
         upd.xp = result.xp + 1;
-        dbo.collection("users").update(query, upd, function(err, res) {
-          if (err) console.error('Error occurred', err);
-          db.close();
-        });
+        try {
+          dbo.collection("users").update(query, upd, function(err, res) {
+            if (err) console.error('Error occurred', err);
+            db.close();
+          });
+        } catch (e) {
+          console.error('Error occurred', e);
+        }
       } else {
         db.close();
       }
@@ -296,9 +300,6 @@ client.on("message", async message => {
         }
       } else {
         if (message.author.bot === false) {
-          dbo.collection("users").findOne(query, function(err, result) {
-            if (err) console.error('Error occurred', err);
-            if (result == null) {
               var user = defaultUser;
               user.name = message.author.id;
               try {
@@ -306,10 +307,8 @@ client.on("message", async message => {
                 db.close();
               } catch (err) {
                 console.log(err);
+                db.close();
               }
-            }
-            db.close();
-          });
         } else
           db.close();
       }
