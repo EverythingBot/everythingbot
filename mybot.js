@@ -26,7 +26,6 @@ var defaultServer = {
 }
 
 var defaultUser = {
-  _id: null,
   "name": null,
   "money": 0,
   "xp": 0,
@@ -100,6 +99,7 @@ client.on("guildCreate", guild => {
   mongo.connect(ServerURL, {
     useNewUrlParser: true
   }, function(err, db) {
+
     if (err) console.error('Error occurred', err);
 
     var dbo = db.db("servers");
@@ -107,14 +107,12 @@ client.on("guildCreate", guild => {
     serv.serverID = guild.id;
     try {
       dbo.collection("servers").insertOne(serv);
-      db.close();
-    } catch (e) {
-      console.log(e);
+    } catch (err) {
+      console.log(err);
     }
   });
-});
-console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
-client.user.setActivity(`on ${client.guilds.size} servers | e!help`);
+  console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
+  client.user.setActivity(`on ${client.guilds.size} servers | e!help`);
 });
 
 client.on("guildMemberAdd", guild => {
@@ -211,9 +209,8 @@ client.on("message", async message => {
           serv.serverID = message.guild.id;
           try {
             dbo.collection("servers").insertOne(serv);
-            db.close();
-          } catch (e) {
-            console.log(e);
+          } catch (err) {
+            console.log(err);
           }
         }
       });
@@ -301,15 +298,14 @@ client.on("message", async message => {
             if (err) console.error('Error occurred', err);
             if (result == null) {
               var user = defaultUser;
-              user._id = message.author.id;
               user.name = message.author.id;
               try {
                 dbo.collection("users").insertOne(user);
-                db.close();
-              } catch (e) {
-                console.log(e);
+              } catch (err) {
+                console.log(err);
               }
             }
+            db.close();
           });
         } else
           db.close();
@@ -378,7 +374,6 @@ async function checkCommand(message, prefix) {
   if (command === "gayray") {
   message.channel.send();
   const filter = response => ((response.author.id != "440524747353227275"));
-
   message.channel.send(`Person below triple hella quadruple gay
   AND, if they delete their message they are permanently gay, and will be reminded of that.
   AND, this message can't be deflected.
