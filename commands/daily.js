@@ -12,7 +12,7 @@ exports.run = (client, message, args, mongo) => {
   mongo.connect(UserURL, function(err, db) {
     var dbo = db.db("users");
     var query = {
-      "name": message.author.tag
+      "name": message.author.id
     };
     dbo.collection("users").findOne(query, function(err, result) {
       var d = new Date();
