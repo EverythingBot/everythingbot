@@ -4,6 +4,7 @@ exports.run = (client, message, args, mongo) => {
   var fon = ".fonts/bahnschrift.fnt";
   var fonTwo = ".fonts/FranklinGothicMedium.fnt";
   var UserURL = process.env.USER;
+  var ServerURL = process.env.SERVER;
   var Jimp = require("jimp");
   var shortNumber = require('short-number');
 
@@ -35,7 +36,8 @@ exports.run = (client, message, args, mongo) => {
       if (err) throw err;
       var cha = result;
       if (cha != null) {
-        makeProfile(message, cha.money, cha.xp, cha.level, tags);
+        decide(message, cha.money, cha.xp, cha.level, tags, ID);
+        //  makeProfile(message, cha.money, cha.xp, cha.level, tags);
         db.close();
       } else {
         if (args[0] != null) {
@@ -48,6 +50,52 @@ exports.run = (client, message, args, mongo) => {
       }
     });
   });
+
+  function decide(mes, money, xp, level, tag, id) {
+    mongo.connect(ServerURL, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("servers");
+
+      var query = {
+        "serverID": message.guild.id
+      };
+
+      dbo.collection("servers").find(query).toArray(function(err, result) {
+        if(err) throw err;
+
+        var serv = result[0];
+
+        if(serv.balPic == true || serv.balPic == null){
+          makeProfile(mes, money, xp, level, tag);
+        } else {
+          var user = client.users.get(id);
+          var bal = {
+            "embed": {
+              "color": 62975,
+              "author": {
+                "name": `${user.username}`,
+                "icon_url": `${user.displayAvatarURL}`
+              },
+              "fields": [{
+                "name": "Money",
+                "value": `$${shortNumber(money)}`
+              },
+              {
+                "name": "XP",
+                "value": `${shortNumber(xp)} / ${shortNumber(level*150)}`
+              },
+              {
+                "name": "Level",
+                "value": `${level}`
+              }],
+              "timestamp": new Date()
+            }
+          };
+          mes.channel.send(bal);
+        }
+      });
+    });
+  }
 
   function makeProfile(mes, money, xp, level, tag) {
     Jimp.read(pic, function(err, image) {
